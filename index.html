@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="author" content="asapdev, blanco, outfit" />
+  <meta name="description" content="Chatlog Magician para GTA World feito por Blanco e Outfit com carinho!" />
+  <meta name="keywords" content="GTAW, GTAWorld, GTA World, RAGE MP, chatlog magician, chatlog" />
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+  <meta name="msapplication-navbutton-color" content="#000000" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <title>Chatlog Magician</title>
+
+  <!-- Preload critical assets -->
+  <link rel="preload" href="css/foundation.fixed.css" as="style" />
+  <link rel="preload" href="js/app.js" as="script" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/foundation.fixed.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <link rel="stylesheet" href="css/modern.css" />
+  <link rel="stylesheet" href="css/fontawesome.min.css" />
+  <link rel="stylesheet" href="color-palette/color-palette.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" href="favicon.png" type="image/png" />
+
+  <!-- Error handling and cross-origin fixes -->
+  <script src="js/error-handler.js" defer></script>
+  <script src="js/cross-origin-fix.js" defer></script>
+  <script src="js/cors-handler.js" defer></script>
+
+  <style>
+   label {
+    display: none;
+   }
+
+   ::-webkit-input-placeholder {
+    color: black;
+   }
+
+   :-ms-input-placeholder {
+    color: black;
+   }
+
+   ::placeholder {
+    color: black;
+   }
+
+   #chatlogInput::placeholder {
+    color: transparent;
+   }
+
+   .button .bmc-btn,
+   .bmc-btn {
+     background-color: transparent !important;
+     min-width: auto !important;
+     height: 38px !important;
+     padding: 0 12px !important;
+     line-height: 1 !important;
+   }
+  </style>
+ </head>
+ <body>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+           <div class="cell small-12">
+              <div class="grid-x grid-margin-x align-middle">
+                 <div class="cell small-4 medium-2">
+                    <label for="font-label">Tamanho da Fonte:</label>
+                    <input name="font-label" id="font-label" type="number" min="10" max="64" value="12" aria-label="Tamanho da Fonte" />
+                 </div>
+                 <div class="cell small-4 medium-2">
+                    <label for="lineLengthInput">Comprimento da Linha:</label>
+                    <input type="number" id="lineLengthInput" min="50" max="150" value="77" aria-label="Comprimento da Linha">
+                 </div>
+                 <div class="cell small-8 medium-8">
+                    <label for="characterNameInput">Filtro de Nome do Personagem:</label>
+                    <div class="input-group" style="position: relative;">
+                      <input type="text" id="characterNameInput" placeholder="Digite o nome do personagem" autocomplete="off" aria-label="Filtro de Nome do Personagem" />
+                      <div class="input-group-button" style="display: flex; gap: 4px;">
+                        <button class="button small" id="addCharacterBtn" type="button" aria-label="Adicionar personagem">Add</button>
+                        <button class="button small" id="showCharacterListBtn" type="button" aria-label="Mostrar lista de personagens">&#9660;</button>
+                      </div>
+                      <div id="characterNameDropdown" class="character-dropdown" style="display: none; position: absolute; top: 110%; left: 0; right: 0; background: #222; color: #fff; border: 1px solid #444; z-index: 1000; max-height: 150px; overflow-y: auto;" role="listbox"></div>
+                    </div>
+                 </div>
+              </div>
+              <label for="chatlogInput">Chat Log:</label>
+              <div class="textarea-container">
+                 <textarea id="chatlogInput" class="form-control textarea-input" rows="15" placeholder="Insira o seu chatlog..." aria-label="Chat log input"></textarea>
+                 <div class="logo-overlay">
+                    <img src="logo.png" alt="Chatlog Magician Logo" loading="lazy" width="200" height="200" />
+                 </div>
+              </div>
+              <div class="grid-x grid-margin-x align-middle">
+                 <div class="cell auto">
+                    <button id="downloadOutputTransparent" class="button success" aria-label="Download chat log">Download</button>
+                    <button id="toggleBackground" class="button">Mudar Plano de Fundo</button>
+                    <button id="censorCharButton" class="button secondary censor-char-button" aria-label="Copy censor character" title="Copy ÷ character">÷</button>
+                    <button id="toggleColorPalette" class="button" aria-label="Toggle color palette" title="Clique para colorir o texto">Cor do texto</button>
+                   </div>
+                 </div>
+              </div>
+              <div id="output" class="output" role="region" aria-label="Formatted chat log output"></div>
+           </div>
+        </div>
+     </div>
+
+     <!-- Third-party scripts -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/4.0.0-beta.2/jquery.min.js" defer></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.9.0/js/foundation.min.js" defer></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.5.0/dom-to-image-more.min.js" defer></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" defer></script>
+
+     <!-- Application scripts -->
+     <script src="js/parse-text.js" defer></script>
+     <script src="js/chat.js" defer></script>
+     <script src="color-palette/color-palette.js" defer></script>
+     <script src="js/chatlog-parser.js" defer></script>
+     <script src="js/app.js" defer></script>
+
+     <!-- History panel -->
+     <div class="history-tab" 
+          onclick="toggleHistoryPanel()" 
+          role="button" 
+          tabindex="0" 
+          aria-label="Open chat history" 
+          aria-expanded="false">
+       <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
+     </div>
+
+     <div id="historyPanel" 
+          class="history-panel" 
+          role="dialog" 
+          aria-label="Chat history" 
+          aria-hidden="true">
+       <div class="history-header">
+         <h3>Histórico</h3>
+       </div>
+       <div class="history-items" role="list"></div>
+     </div>
+
+     <!-- Color Palette -->
+     <div id="colorPalette" class="color-palette" style="display: none;">
+         <div class="color-palette-header">
+             Selecionar Cor
+             <div class="selection-counter">0 selected</div>
+         </div>
+         <div class="color-palette-items">
+             <div class="color-item me" data-color="me" data-tooltip="Me/Ame Ações"></div>
+             <div class="color-item ame" data-color="ame" data-tooltip="Me/Ame Ações"></div>
+             <div class="color-item darkgrey" data-color="darkgrey" data-tooltip="Muito Baixo"></div>
+             <div class="color-item grey" data-color="grey" data-tooltip="Baixo"></div>
+             <div class="color-item lightgrey" data-color="lightgrey" data-tooltip="Texto Normal"></div>
+             <div class="color-item death" data-color="death" data-tooltip="Mortes/Falhas"></div>
+             <div class="color-item yellow" data-color="yellow" data-tooltip="Info Importante"></div>
+             <div class="color-item green" data-color="green" data-tooltip="Sucesso"></div>
+             <div class="color-item orange" data-color="orange" data-tooltip="Avisos"></div>
+             <div class="color-item blue" data-color="blue" data-tooltip="Info"></div>
+             <div class="color-item white" data-color="white" data-tooltip="Texto Normal"></div>
+             <div class="color-item radioColor" data-color="radioColor" data-tooltip="Radio (Seu Canal)"></div>
+             <div class="color-item radioColor2" data-color="radioColor2" data-tooltip="Radio (Outro Canal)"></div>
+             <div class="color-item depColor" data-color="depColor" data-tooltip="Departamento"></div>
+             <div class="color-item vesseltraffic" data-color="vesseltraffic" data-tooltip="Vessel Traffic"></div>
+             <div class="color-item toyou" data-color="toyou" data-tooltip="Direitamente para você [!]"></div>
+         </div>
+     </div>
+
+     <!-- Changelog tab -->
+     <div class="changelog-tab" 
+          role="button" 
+          tabindex="0" 
+          aria-label="Open changelog" 
+          aria-expanded="false">
+       <i class="fas fa-list" aria-hidden="true"></i>
+     </div>
+
+     <div id="changelogPanel" 
+          class="changelog-panel" 
+          role="dialog" 
+          aria-label="Changelog" 
+          aria-hidden="true">
+       <div class="changelog-header">
+         <h3>Últimas Atualizações</h3>
+       </div>
+       <div class="changelog-items" role="list"></div>
+     </div>
+
+     <script src="js/changelog-data.js" defer></script>
+     <script src="js/changelog.js" defer></script>
+
+     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            ColorPalette.init();
+        });
+     </script>
+ </body>
+</html>
